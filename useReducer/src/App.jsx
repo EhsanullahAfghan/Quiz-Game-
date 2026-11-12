@@ -1,11 +1,11 @@
-import React from "react";
+import DateCounter from "./DateCounter";
 
-const App = () => {
+function App() {
   return (
     <div>
-      <h1>Hello Brother</h1>
+      <DateCounter />
     </div>
   );
-};
+}
 
 export default App;
