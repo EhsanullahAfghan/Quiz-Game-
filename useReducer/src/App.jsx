@@ -1,9 +1,14 @@
-import DateCounter from "./DateCounter";
+import Header from "./Header";
+import MainMenu from "./MainMenu";
 
 function App() {
   return (
-    <div>
-      <DateCounter />
+    <div className="App">
+      <Header />
+      <MainMenu>
+        <p>1/15</p>
+        <p>Question</p>
+      </MainMenu>
     </div>
   );
 }
