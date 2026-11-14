@@ -1,6 +1,9 @@
 import { useEffect, useReducer, useState } from "react";
 import Header from "./Header";
 import MainMenu from "./MainMenu";
+import Loader from "./Loader";
+import Error from "./Error";
+import StartScreen from "./StartScreen";
 
 const initial = {
   questions: [],
@@ -27,14 +30,18 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initial);
+  const [{ questions, status }, dispatch] = useReducer(reducer, initial);
 
-  console.log(state);
+  const Question_Length = questions.length;
+  console.log(Question_Length);
 
   useEffect(function () {
+    const abort = new AbortController();
     async function FetchQuestions() {
       try {
-        const res = await fetch(`http://localhost:4000/questions`);
+        const res = await fetch(`http://localhost:4000/questions`, {
+          signal: abort.signal,
+        });
 
         if (!res.ok) throw new Error("Please Check Your internet Connections");
 
@@ -49,14 +56,21 @@ function App() {
     }
 
     FetchQuestions();
+
+    return function () {
+      abort.abort();
+    };
   }, []);
 
   return (
     <div className="App">
       <Header />
       <MainMenu>
-        <p>1/15</p>
-        <p>Question</p>
+        {status === "loading" && <Loader />}
+        {status === "error" && <Error />}
+        {status === "ready" && (
+          <StartScreen Question_Length={Question_Length} />
+        )}
       </MainMenu>
     </div>
   );
