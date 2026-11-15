@@ -4,6 +4,7 @@ import MainMenu from "./MainMenu";
 import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
+import Questions from "./Questions";
 
 const initial = {
   questions: [],
@@ -21,6 +22,12 @@ function reducer(state, action) {
         status: "ready",
       };
 
+    case "start":
+      return {
+        ...state,
+        status: "active",
+      };
+
     case "dataFailed":
       return {
         ...state,
@@ -33,7 +40,6 @@ function App() {
   const [{ questions, status }, dispatch] = useReducer(reducer, initial);
 
   const Question_Length = questions.length;
-  console.log(Question_Length);
 
   useEffect(function () {
     const abort = new AbortController();
@@ -69,8 +75,9 @@ function App() {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && (
-          <StartScreen Question_Length={Question_Length} />
+          <StartScreen Question_Length={Question_Length} dispatch={dispatch} />
         )}
+        {status === "active" && <Questions />}
       </MainMenu>
     </div>
   );
