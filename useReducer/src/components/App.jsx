@@ -5,6 +5,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Questions from "./Questions";
+import NextButton from "./NextButton";
 
 const initial = {
   questions: [],
@@ -43,6 +44,13 @@ function reducer(state, action) {
             : state.points,
       };
     }
+
+    case "nextQuestion":
+      return {
+        ...state,
+        index: state.index + 1,
+        answer: null,
+      };
 
     case "dataFailed":
       return {
@@ -90,7 +98,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <h1>{answer}</h1>
+
       <MainMenu>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
@@ -98,11 +106,15 @@ function App() {
           <StartScreen Question_Length={Question_Length} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Questions
-            question={questions[index]}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            <Questions
+              question={questions[index]}
+              dispatch={dispatch}
+              answer={answer}
+            />
+
+            <NextButton dispatch={dispatch} answer={answer} />
+          </>
         )}
       </MainMenu>
     </div>
