@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import Header from "./Header";
 import MainMenu from "./MainMenu";
 import Loader from "./Loader";
@@ -12,6 +12,8 @@ const initial = {
   // loading , error , ready , active , finished
   status: "loading",
   index: 0,
+  answer: null,
+  points: 0,
 };
 
 function reducer(state, action) {
@@ -29,6 +31,19 @@ function reducer(state, action) {
         status: "active",
       };
 
+    case "newAnswer": {
+      const question = state.questions.at(state.index);
+
+      return {
+        ...state,
+        answer: action.payLoad,
+        points:
+          question.correctOption === action.payLoad
+            ? state.points + question.points
+            : state.points,
+      };
+    }
+
     case "dataFailed":
       return {
         ...state,
@@ -38,7 +53,10 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [{ questions, status, index }, dispatch] = useReducer(reducer, initial);
+  const [{ questions, status, index, answer }, dispatch] = useReducer(
+    reducer,
+    initial,
+  );
 
   const Question_Length = questions.length;
 
@@ -72,13 +90,20 @@ function App() {
   return (
     <div className="App">
       <Header />
+      <h1>{answer}</h1>
       <MainMenu>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && (
           <StartScreen Question_Length={Question_Length} dispatch={dispatch} />
         )}
-        {status === "active" && <Questions question={questions[index]} />}
+        {status === "active" && (
+          <Questions
+            question={questions[index]}
+            dispatch={dispatch}
+            answer={answer}
+          />
+        )}
       </MainMenu>
     </div>
   );
